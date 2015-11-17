@@ -10,7 +10,7 @@
 	"Modules": [
 		{
 			"Name": "UEFilesystem",
-			"Type": "Developer",
+			"Type": "Runtime"
 		}
 	],
 	"EnabledByDefault": false,
