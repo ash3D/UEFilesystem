@@ -124,7 +124,7 @@ FString AFilesystem::GameDir(bool forceAbsolute) const
 	{
 		try
 		{
-			return fs::system_complete(*GameDir(false)).string().c_str();
+			return fs::canonical(*GameDir(false)).string().c_str();
 		}
 		catch (const std::exception &error)
 		{
