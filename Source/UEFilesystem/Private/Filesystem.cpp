@@ -2,34 +2,17 @@
 #include "Filesystem.h"
 
 #if defined _MSC_VER && _MSC_VER < 1900
-#define noexcept
+#error old compiler version
 #endif
 
 #pragma warning(default : 4706 4800)
 
 DEFINE_LOG_CATEGORY(Filesystem)
 
-namespace filesystem = std::tr2::sys;
+namespace fs = std::tr2::sys;
 
 namespace
 {
-	template<typename Char>
-	struct PathTraits;
-
-	template<>
-	struct PathTraits<char>
-	{
-		typedef filesystem::path_traits type;
-	};
-
-	template<>
-	struct PathTraits<wchar_t>
-	{
-		typedef filesystem::wpath_traits type;
-	};
-
-	typedef filesystem::basic_path<std::basic_string<TCHAR>, PathTraits<TCHAR>::type> Path;
-
 	template<typename Char = char>
 	inline typename std::enable_if<std::is_same<Char, TCHAR>::value, const Char *>::type Str_char_2_TCHAR(const char *str)
 	{
@@ -69,7 +52,7 @@ void AFilesystem::CreateDirectory(const FString &path) const
 {
 	try
 	{
-		if (filesystem::create_directories(Path(*path)))
+		if (fs::create_directories(fs::path(*path)))
 			UE_LOG(Filesystem, Log, TEXT("Directory \"%s\" created successfully."), *path)
 		else
 			UE_LOG(Filesystem, Error, FAIL_CREATE_DIR_MSG_PREFIX TEXT("."), *path)
@@ -84,13 +67,13 @@ void AFilesystem::Remove(const FString &srcPath, bool force) const
 {
 	try
 	{
-		const Path path(*srcPath);
+		const fs::path path(*srcPath);
 		if (force)
 		{
-			const auto count = filesystem::remove_all(path);
+			const auto count = fs::remove_all(path);
 			UE_LOG(Filesystem, Log, TEXT("Directory \"%s\" with all it's content has been successfully removed (%d items)."), *srcPath, count)
 		}
-		else if (filesystem::remove(path))
+		else if (fs::remove(path))
 			UE_LOG(Filesystem, Log, TEXT("Directory \"%s\" has been successfully removed."), *srcPath)
 		else
 			UE_LOG(Filesystem, Error, FAIL_REMOVE_DIR_MSG_PREFIX TEXT("."), *srcPath)
@@ -105,7 +88,7 @@ void AFilesystem::Rename(const FString &oldPath, const FString &newPath) const
 {
 	try
 	{
-		filesystem::rename(Path(*oldPath), Path(*newPath));
+		fs::rename(fs::path(*oldPath), fs::path(*newPath));
 		UE_LOG(Filesystem, Log, TEXT("Directory \"%s\" has been successfully renamed to \"%s\"."), *oldPath, *newPath)
 	}
 	catch (const std::exception &error)
@@ -118,7 +101,7 @@ FString AFilesystem::CurrentPath() const
 {
 	try
 	{
-		return filesystem::current_path<Path>().string().c_str();
+		return fs::current_path().string().c_str();
 	}
 	catch (const std::exception &error)
 	{
@@ -141,7 +124,7 @@ FString AFilesystem::GameDir(bool forceAbsolute) const
 	{
 		try
 		{
-			return filesystem::system_complete(Path(*GameDir(false))).string().c_str();
+			return fs::system_complete(*GameDir(false)).string().c_str();
 		}
 		catch (const std::exception &error)
 		{
