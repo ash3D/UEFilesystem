@@ -1,0 +1,20 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Filesystem",
+	"Description": "Provides basic filesystem operations.",
+	"Category": "IO",
+	"CreatedBy": "ash",
+	"CreatedByURL": "https://github.com/ash3D",
+	"Modules": [
+		{
+			"Name": "UEFilesystem",
+			"Type": "Developer",
+		}
+	],
+	"EnabledByDefault": false,
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"Installed": false
+}
