@@ -5,7 +5,7 @@
 #error old compiler version
 #endif
 
-#pragma warning(default : 4706 4800)
+#pragma warning(default : 4302 4706 4800)
 
 DEFINE_LOG_CATEGORY(Filesystem)
 
@@ -134,4 +134,35 @@ FString AFilesystem::GameDir(bool forceAbsolute) const
 	}
 	else
 		return FPaths::GameDir();
+}
+
+void AFilesystem::Print(const FString &path) const
+{
+	const int status = (const int)ShellExecute(0, TEXT("print"), (TEXT('"') + std::basic_string<TCHAR>(*path) + TEXT('"')).c_str(), NULL, NULL, SW_SHOWNORMAL);
+	if (status > 32)
+		UE_LOG(Filesystem, Log, TEXT("Printing file \"%s\"..."), *path)
+	else
+	{
+		const TCHAR *msg = [status]
+		{
+			switch (status)
+			{
+			case 0:							return TEXT("OS is out of memory or resources");
+			case ERROR_FILE_NOT_FOUND:		return TEXT("file not found");
+			case ERROR_PATH_NOT_FOUND:		return TEXT("path not found");
+			case ERROR_BAD_FORMAT:			return TEXT("bad format");
+			case SE_ERR_ACCESSDENIED:		return TEXT("access denied");
+			case SE_ERR_ASSOCINCOMPLETE:	return TEXT("association is incomplete or invalid");
+			case SE_ERR_DDEBUSY:			return TEXT("DDE transaction busy");
+			case SE_ERR_DDEFAIL:			return TEXT("DDE transaction failed");
+			case SE_ERR_DDETIMEOUT:			return TEXT("DDE transaction timed out");
+			case SE_ERR_DLLNOTFOUND:		return TEXT("DLL not found");
+			case SE_ERR_NOASSOC:			return TEXT("no association (file is not printable)");
+			case SE_ERR_OOM:				return TEXT("out of memory");
+			case SE_ERR_SHARE:				return TEXT("share violation");
+			default:						return TEXT("unknown error");
+			}
+		}();
+		UE_LOG(Filesystem, Error, TEXT("Fail to print file \"%s\": %s."), *path, msg)
+	}
 }

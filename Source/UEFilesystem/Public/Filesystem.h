@@ -32,4 +32,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Filesystem")
 	FString GameDir(bool forceAbsolute) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Filesystem")
+	void Print(const FString &path) const;
 };
