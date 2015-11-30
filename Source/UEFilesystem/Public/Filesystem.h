@@ -25,6 +25,9 @@ public:
 	void Rename(const FString &oldPath, const FString &newPath) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Filesystem")
+	bool Exists(const FString &path) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Filesystem")
 	FString CurrentPath() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Filesystem")

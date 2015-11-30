@@ -97,6 +97,19 @@ void AFilesystem::Rename(const FString &oldPath, const FString &newPath) const
 	}
 }
 
+bool AFilesystem::Exists(const FString &path) const
+{
+	try
+	{
+		return fs::exists(*path);
+	}
+	catch (const std::exception &error)
+	{
+		UE_LOG(Filesystem, Error, TEXT("Fail to check if the path \"%s\" exists: %s."), *path, (const TCHAR *)Str_char_2_TCHAR(error.what()))
+		return false;
+	}
+}
+
 FString AFilesystem::CurrentPath() const
 {
 	try
